@@ -68,16 +68,49 @@ def test_input(arr_board, row, col, test_num):
     else:
         return False
 
-def find_empty_cells(arr_board):
-    """ This returns a list of tuples 
-    off all of the locations which contain 
-    a 0 in the sudoku board"""
-    ind_empty=  []
-    for row in range(9):
-        for col in range(9):
-            if arr_board[row][col] == 0:
-                ind_empty.append((row, col))
+def solve_board(arr_board, row, col):
+    """This fills in entries in the ind_fill recursively
+    to fill out the sudoku board"""
 
-    return ind_empty
+    # === Base Cases === #
+    # Case 1: End of the grid
+    if row == 8 and col == 9:
+        # We are done
+        # Let's Print the result
+        for row in range(9):
+            print(arr_board[row])
+        return True
+    
+    # Case 2: End of a row
+    if col == 9:
+        row += 1
+        col = 0
+    
+    # Case 3: There is already a number there
+    if arr_board[row][col] > 0:
+        return solve_board(arr_board, row, col+1)
+    # Recursively iterate through possible value
 
-print(find_empty_cells(arr_board))
+    for val in range(1,10):
+        # Check if placement is valid
+        if test_input(arr_board, row, col, val):
+            # The number works
+            # We add the number in
+            arr_board[row][col] = val
+
+            # Now we move onto the next entry
+            if solve_board(arr_board, row, col + 1):
+                # This makes the recursion work
+                return True
+                
+        # If this num didn't pan out we should reset it
+        arr_board[row][col] = 0
+    return False
+
+if (solve_board(arr_board, 0, 0)):
+    print('It worked')
+else:
+    print('It failed')
+
+        
+
